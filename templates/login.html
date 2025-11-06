@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register for A.R.Engineering</title>
+    <title>Login to A.R.Engineering</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -62,31 +62,25 @@
 </head>
 <body>
     <div class="container">
-        <h2>Register for A.R.Engineering</h2>
-        <form id="registerForm">
-            <label for="registerUsername">Username</label>
-            <input type="text" id="registerUsername" name="username" required>
+        <h2>Login to A.R.Engineering</h2>
+        <form action="/login" method="post">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
 
-            <label for="registerEmail">Email</label>
-            <input type="email" id="registerEmail" name="email" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
 
-            <label for="registerPassword">Password</label>
-            <input type="password" id="registerPassword" name="password" required>
-
-            <label for="registerConfirmPassword">Confirm Password</label>
-            <input type="password" id="registerConfirmPassword" name="confirmPassword" required>
-
-            <button type="submit">Register</button>
+            <button type="submit">Login</button>
         </form>
         <div class="toggle">
-            <a href="login.html">Already have an account? Login</a>
+            <a href="register.html">Don't have an account? Register</a>
         </div>
     </div>
 
     <script>
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Registration functionality not implemented yet.');
+            alert('Login functionality not implemented yet.');
         });
     </script>
 </body>
