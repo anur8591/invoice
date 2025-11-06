@@ -4,11 +4,13 @@ import pyodbc
 app = Flask(__name__)
 
 conn_str = (
-    "Driver = {SQL Server};"
-    "Server = YOUR_SERVER_NAME;"
-    "Database = AREngineering;"
-    "Trusted_Connection = yes:"
+    "Driver={ODBC Driver 18 for SQL Server};"
+    "Server=localhost\\ANURAG_SQL;"
+    "Database=AREngineering;"
+    "Trusted_Connection=yes;"
+    "Encrypt=no;"
 )
+
 
 @app.route("/")
 def home():
