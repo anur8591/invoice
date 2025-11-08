@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Invoice | A.R. ENGINEERING</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h2>A.R. ENGINEERING - Invoice Generator</h2>
+    <form method="POST" action="/create_invoice">
+        <label>Customer Name:</label>
+        <input type="text" name="customer_name" required><br>
+
+        <label>GST Invoice No:</label>
+        <input type="text" name="gst_invoice_no" required><br>
+
+        <label>Date:</label>
+        <input type="date" name="date" required><br>
+
+        <label>Description:</label>
+        <input type="text" name="description" required><br>
+
+        <label>HSN Code:</label>
+        <input type="text" name="hsn_code"><br>
+
+        <label>Quantity:</label>
+        <input type="number" name="quantity" required><br>
+
+        <label>Rate:</label>
+        <input type="number" step="0.01" name="rate" required><br>
+
+        <label>CGST (%):</label>
+        <input type="number" step="0.01" name="cgst_rate" value="6"><br>
+
+        <label>SGST (%):</label>
+        <input type="number" step="0.01" name="sgst_rate" value="6"><br>
+
+        <label>Bank Name:</label>
+        <input type="text" name="bank_name" value="Bassein Catholic Co-operative Bank Ltd."><br>
+
+        <label>Branch:</label>
+        <input type="text" name="branch" value="Vasai (W)"><br>
+
+        <label>Account No:</label>
+        <input type="text" name="account_no" value="502000000017990"><br>
+
+        <label>IFSC:</label>
+        <input type="text" name="ifsc" value="BACB0000006"><br>
+
+        <button type="submit">Generate Invoice</button>
+    </form>
+</body>
+</html>

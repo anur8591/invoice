@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | A.R. Engineering</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">A.R. Engineering 🧾</div>
+            <ul class="nav-links">
+                <li><a href="/dashboard">Home</a></li>
+                <li><a href="#">Invoices</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="dashboard-content">
+        <h2>Welcome, {{ username }} 👋</h2>
+        <p>Here you can manage and generate your digital invoices.</p>
+
+    <div class="card-container">
+        <a href="{{ url_for('create_invoice') }}" class="card">🧾 Create New Invoice</a>
+        <a href="#" class="card">📁 View Saved Invoices</a>
+        <a href="#" class="card">⚙️ Settings</a>
+    </div>
+
+    </main>
+</body>
+</html>

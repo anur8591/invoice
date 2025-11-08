@@ -4,11 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A.R.Engineering</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Welcome to A.R.Engineering</h1>
-    <a href="{{ url_for('login') }}">Login</a><br>
-    <a href="{{ url_for('register') }}">Register</a>
+    <p>We undertake all types of engineering works.</p>
+
+    <a href="{{ url_for('login') }}" class="btn">Login</a>
+<a href="{{ url_for('register') }}" class="btn">Register</a>
+
+<style>
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #1e1e2f;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.btn:hover {
+    background: #00aaff;
+}
+</style>
 
 </body>
 </html>
