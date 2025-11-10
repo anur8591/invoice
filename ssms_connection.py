@@ -18,13 +18,14 @@ conn_str = (
 
 # ---------------- ROUTES ---------------- #
 
+# Home page
 @app.route("/")
 def home():
-    if 'user_id' in session:
-        return redirect('/dashboard')
+    # Always render index.html, navbar handles login/profile display dynamically
     return render_template("index.html")
 
 
+# Registration
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == 'POST':
@@ -43,6 +44,7 @@ def register():
     return render_template('register.html')
 
 
+# Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -57,14 +59,17 @@ def login():
         conn.close()
 
         if user:
+            # Save user info in session
             session['user_id'] = user[0]
             session['username'] = user[1]
-            return redirect('/dashboard')
+            # Redirect to homepage, index.html will show Profile now
+            return redirect('/')
         else:
             return "Invalid username or password!"
     return render_template('login.html')
 
 
+# Dashboard (only accessible if logged in)
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' in session:
@@ -73,6 +78,7 @@ def dashboard():
         return redirect('/login')
 
 
+# Logout
 @app.route('/logout')
 def logout():
     session.clear()

@@ -1,9 +1,4 @@
-body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    background: #f5f6fa;
-}
-
+/* ===== Navbar ===== */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -11,12 +6,20 @@ body {
     padding: 15px 40px;
     background-color: #1e1e2f;
     color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    flex-wrap: wrap;
+}
+
+.navbar .logo {
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 25px;
+    gap: 20px;
+    align-items: center;
 }
 
 .nav-links a {
@@ -30,24 +33,114 @@ body {
     color: #00aaff;
 }
 
-.dashboard-content {
+.btn-small {
+    background: #00aaff;
+    padding: 6px 15px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.btn-small:hover {
+    background: #1e90ff;
+}
+
+/* ===== Hero Section ===== */
+.hero {
+    background: linear-gradient(135deg, #1E90FF, #4CAF50);
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
     text-align: center;
-    padding: 40px;
+    padding: 0 20px;
 }
 
-.card {
-    display: inline-block;
-    margin: 15px;
-    padding: 20px 40px;
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-buttons .btn {
+    font-size: 1rem;
+    padding: 12px 30px;
+    margin: 0 10px;
+    transition: all 0.3s ease;
+}
+
+.hero-buttons .btn:hover {
+    transform: scale(1.05);
+}
+
+/* ===== Features Section ===== */
+.features {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f5f6fa;
+}
+
+.features h2 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+}
+
+.feature-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+}
+
+.feature-card {
     background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    text-decoration: none;
-    color: black;
+    border-radius: 15px;
+    padding: 30px;
+    width: 220px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     transition: 0.3s;
+    text-align: center;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+.feature-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.feature-card i {
+    color: #1E90FF;
+    margin-bottom: 15px;
+}
+
+/* ===== About Section ===== */
+.about {
+    padding: 60px 20px;
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.about h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.about p {
+    font-size: 1.1rem;
+    color: #555;
+}
+
+/* ===== Footer ===== */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #1e1e2f;
+    color: white;
 }
