@@ -86,24 +86,50 @@ def logout():
 
 
 # ---------- CREATE INVOICE ----------
+import pdfkit  # add this import at the top of the file
+
 @app.route('/create_invoice', methods=['GET', 'POST'])
 def create_invoice():
     if request.method == 'POST':
-        # Render invoice_template.html using the form data
-        html = render_template('invoice_template.html', form_data=request.form)
+        # Get form data
+        form_data = request.form.to_dict(flat=False)
 
-        # Generate PDF from HTML (wkhtmltopdf must be installed)
-        pdf = pdfkit.from_string(html, False)
+        # Convert to easy dictionary (handle multiple items)
+        invoice_data = {
+            "customer_name": request.form.get("customer_name"),
+            "gst_invoice_no": request.form.get("gst_invoice_no"),
+            "date": request.form.get("date"),
+            "description": form_data.get("description[]", []),
+            "hsn_code": form_data.get("hsn_code[]", []),
+            "quantity": form_data.get("quantity[]", []),
+            "rate": form_data.get("rate[]", []),
+            "cgst_rate": request.form.get("cgst_rate", "0"),
+            "sgst_rate": request.form.get("sgst_rate", "0"),
+            "bank_name": request.form.get("bank_name"),
+            "branch": request.form.get("branch"),
+            "account_no": request.form.get("account_no"),
+            "ifsc": request.form.get("ifsc"),
+        }
 
-        # Return the PDF as download
+        # Render the HTML template for PDF
+        html = render_template("invoice_template.html", data=invoice_data)
+
+        # Configure path to wkhtmltopdf
+        config = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+
+        # Generate the PDF
+        pdf = pdfkit.from_string(html, False, configuration=config)
+
+        # Send PDF as downloadable file
         return send_file(
             io.BytesIO(pdf),
-            download_name="Invoice.pdf",
+            download_name=f"Invoice_{invoice_data['gst_invoice_no']}.pdf",
             mimetype="application/pdf"
         )
 
-    # Show the invoice creation form if GET request
-    return render_template('invoice.html')
+    # If GET, just show form
+    return render_template("invoice.html")
+
 
 
 

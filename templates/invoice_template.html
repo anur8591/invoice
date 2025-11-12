@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    h2, h4, p { margin: 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    table, th, td { border: 1px solid #000; }
+    th, td { padding: 8px; text-align: center; }
+    .header { text-align: center; margin-bottom: 20px; }
+    .right { text-align: right; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>A.R. ENGINEERING</h2>
+    <p>WE UNDERTAKE ALL TYPE OF ENGINEERING WORKS</p>
+    <p><strong>GSTIN:</strong> 27BRJPP0821M1ZH</p>
+  </div>
+
+  <p><strong>Customer Name:</strong> {{ data.customer_name }}</p>
+  <p><strong>Invoice No:</strong> {{ data.gst_invoice_no }} &nbsp;&nbsp; <strong>Date:</strong> {{ data.date }}</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Sr No</th>
+        <th>Description</th>
+        <th>HSN</th>
+        <th>Qty</th>
+        <th>Rate (₹)</th>
+        <th>Amount (₹)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set total = 0 %}
+      {% for i in range(data.description|length) %}
+      {% set amount = (data.quantity[i]|float) * (data.rate[i]|float) %}
+      {% set total = total + amount %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ data.description[i] }}</td>
+        <td>{{ data.hsn_code[i] }}</td>
+        <td>{{ data.quantity[i] }}</td>
+        <td>{{ data.rate[i] }}</td>
+        <td>{{ "%.2f"|format(amount) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <br>
+  <p class="right"><strong>Subtotal:</strong> ₹{{ "%.2f"|format(total) }}</p>
+  <p class="right"><strong>CGST ({{ data.cgst_rate }}%):</strong> ₹{{ "%.2f"|format(total * (data.cgst_rate|float) / 100) }}</p>
+  <p class="right"><strong>SGST ({{ data.sgst_rate }}%):</strong> ₹{{ "%.2f"|format(total * (data.sgst_rate|float) / 100) }}</p>
+
+  {% set grand = total + total * (data.cgst_rate|float + data.sgst_rate|float) / 100 %}
+  <h3 class="right">Grand Total: ₹{{ "%.2f"|format(grand) }}</h3>
+
+  <br><hr>
+  <h4>Bank Details:</h4>
+  <p><strong>Bank:</strong> {{ data.bank_name }} | <strong>Branch:</strong> {{ data.branch }}</p>
+  <p><strong>A/C No:</strong> {{ data.account_no }} | <strong>IFSC:</strong> {{ data.ifsc }}</p>
+
+  <p class="right" style="margin-top:40px;"><strong>For A.R. ENGINEERING</strong></p>
+</body>
+</html>

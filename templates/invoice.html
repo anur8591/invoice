@@ -9,11 +9,12 @@
 </head>
 <body class="bg-light">
   <div class="container mt-4">
-    <h2 class="text-center mb-4">A.R. ENGINEERING</h2>
+    <h2 class="text-center mb-1">A.R. ENGINEERING</h2>
     <p class="text-center text-muted">WE UNDERTAKE ALL TYPES OF ENGINEERING WORKS</p>
+    <hr>
 
     <form method="POST" action="/create_invoice">
-      <div class="row">
+      <div class="row mb-3">
         <div class="col-md-6">
           <label>Customer Name</label>
           <input class="form-control" name="customer_name" required>
@@ -28,36 +29,78 @@
         </div>
       </div>
 
-      <hr>
       <h5>Items</h5>
       <table class="table table-bordered" id="items-table">
-        <thead>
+        <thead class="table-light">
           <tr>
             <th>Description</th>
             <th>HSN</th>
             <th>Qty</th>
-            <th>Rate</th>
-            <th>Amount</th>
+            <th>Rate (₹)</th>
+            <th>Amount (₹)</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><input class="form-control" name="description[]" required></td>
             <td><input class="form-control" name="hsn_code[]"></td>
-            <td><input type="number" class="form-control qty" name="quantity[]" value="1"></td>
-            <td><input type="number" class="form-control rate" name="rate[]" value="0"></td>
-            <td class="amount">0</td>
+            <td><input type="number" class="form-control qty" name="quantity[]" value="1" step="1" min="1"></td>
+            <td><input type="number" step="0.01" class="form-control rate" name="rate[]" value="0"></td>
+            <td class="amount">0.00</td>
           </tr>
         </tbody>
       </table>
-      <button type="button" class="btn btn-outline-primary" id="add-row">+ Add Item</button>
+      <button type="button" class="btn btn-outline-primary btn-sm" id="add-row">+ Add Item</button>
 
-      <div class="text-end mt-3">
-        <h5>Total: ₹ <span id="total">0</span></h5>
+      <hr>
+
+      <div class="row mt-3">
+        <div class="col-md-4 offset-md-8">
+          <div class="d-flex justify-content-between">
+            <label><strong>Subtotal:</strong></label>
+            <span id="subtotal">0.00</span>
+          </div>
+          <div class="d-flex justify-content-between">
+            <label>CGST (%)</label>
+            <input type="number" class="form-control form-control-sm w-25" id="cgst" name="cgst_rate" value="9">
+          </div>
+          <div class="d-flex justify-content-between">
+            <label>SGST (%)</label>
+            <input type="number" class="form-control form-control-sm w-25" id="sgst" name="sgst_rate" value="9">
+          </div>
+          <div class="d-flex justify-content-between mt-2">
+            <label><strong>Grand Total (₹):</strong></label>
+            <strong><span id="grand_total">0.00</span></strong>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <h5>Bank Details</h5>
+      <div class="row">
+        <div class="col-md-4">
+          <label>Bank Name</label>
+          <input class="form-control" name="bank_name">
+        </div>
+        <div class="col-md-4">
+          <label>Branch</label>
+          <input class="form-control" name="branch">
+        </div>
+        <div class="col-md-4">
+          <label>Account No</label>
+          <input class="form-control" name="account_no">
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-4">
+          <label>IFSC Code</label>
+          <input class="form-control" name="ifsc">
+        </div>
       </div>
 
       <div class="text-center mt-4">
-        <button type="submit" class="btn btn-success">Generate Invoice (PDF)</button>
+        <button type="submit" class="btn btn-success px-4">Generate Invoice (PDF)</button>
       </div>
     </form>
   </div>
@@ -68,22 +111,29 @@ $("#add-row").click(() => {
     <tr>
       <td><input class="form-control" name="description[]" required></td>
       <td><input class="form-control" name="hsn_code[]"></td>
-      <td><input type="number" class="form-control qty" name="quantity[]" value="1"></td>
-      <td><input type="number" class="form-control rate" name="rate[]" value="0"></td>
-      <td class="amount">0</td>
+      <td><input type="number" class="form-control qty" name="quantity[]" value="1" step="1" min="1"></td>
+      <td><input type="number" step="0.01" class="form-control rate" name="rate[]" value="0"></td>
+      <td class="amount">0.00</td>
     </tr>`);
 });
 
-$(document).on("input", ".qty, .rate", function() {
-  let total = 0;
+// live calculation
+$(document).on("input", ".qty, .rate, #cgst, #sgst", function() {
+  let subtotal = 0;
   $("#items-table tbody tr").each(function() {
     let qty = parseFloat($(this).find(".qty").val()) || 0;
     let rate = parseFloat($(this).find(".rate").val()) || 0;
     let amt = qty * rate;
     $(this).find(".amount").text(amt.toFixed(2));
-    total += amt;
+    subtotal += amt;
   });
-  $("#total").text(total.toFixed(2));
+
+  $("#subtotal").text(subtotal.toFixed(2));
+
+  let cgst = parseFloat($("#cgst").val()) || 0;
+  let sgst = parseFloat($("#sgst").val()) || 0;
+  let grand_total = subtotal + (subtotal * (cgst + sgst) / 100);
+  $("#grand_total").text(grand_total.toFixed(2));
 });
 </script>
 </body>
