@@ -69,15 +69,18 @@
     margin-right: auto;
 }
 
-.hero-buttons .btn {
-    font-size: 1rem;
-    padding: 12px 30px;
-    margin: 0 10px;
-    transition: all 0.3s ease;
+.btn-primary {
+  background-color: #00aaff;
+  color: #fff;
+  padding: 12px 30px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s ease;
 }
 
-.hero-buttons .btn:hover {
-    transform: scale(1.05);
+.btn-primary:hover {
+  background-color: #0088cc;
 }
 
 /* ===== Features Section ===== */
@@ -137,10 +140,110 @@
     color: #555;
 }
 
+.contact-section {
+  background: #f8f9fa;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.contact-container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+.contact-section h2 {
+  font-size: 2.5rem;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.contact-section p {
+  color: #555;
+  margin-bottom: 30px;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  text-align: left;
+}
+
+.contact-info {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.contact-info h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.contact-info p {
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.contact-form form {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #007bff;
+}
+
+.contact-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.contact-btn:hover {
+  background-color: #0056b3;
+}
+
+
 /* ===== Footer ===== */
 footer {
     text-align: center;
     padding: 20px;
     background: #1e1e2f;
     color: white;
+}
+
+.logout-btn {
+  background-color: #e74c3c;
+  color: white !important;
+  border-radius: 4px;
+  padding: 6px 12px;
+  transition: background-color 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
 }

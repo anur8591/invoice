@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,22 +8,27 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
     <!-- ===== Navbar ===== -->
     <header>
         <nav class="navbar">
-            <div class="logo">A.R.Engineering</div>
+            <div class="logo">A.R. Engineering</div>
+
             <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
 
+                <!-- Conditional buttons based on login state -->
                 {% if not session.get('username') %}
-                    <li><a href="{{ url_for('login') }}" class="btn-small">Login</a></li>
-                    <li><a href="{{ url_for('register') }}" class="btn-small">Register</a></li>
+                <li><a href="{{ url_for('login') }}" class="btn-small">Login</a></li>
+                <li><a href="{{ url_for('register') }}" class="btn-small">Register</a></li>
                 {% else %}
-                    <li><a href="{{ url_for('dashboard') }}" class="btn-small">Profile</a></li>
+                <li><a href="{{ url_for('dashboard') }}" class="btn-small">Profile</a></li>
+                <li><a href="{{ url_for('logout') }}" class="btn-small logout-btn">Logout</a></li>
                 {% endif %}
             </ul>
         </nav>
@@ -31,17 +37,14 @@
     <!-- ===== Hero Section ===== -->
     <section class="hero" id="home">
         <div class="hero-content">
-            <h1>Welcome to A.R.Engineering</h1>
-            <p>Generate digital invoices online, track your history, and manage your engineering services with ease.</p>
-            
-            <div class="hero-buttons">
-                {% if not session.get('username') %}
-                    <a href="{{ url_for('login') }}" class="btn">Get Started</a>
-                    <a href="{{ url_for('register') }}" class="btn">Sign Up</a>
-                {% else %}
-                    <a href="{{ url_for('dashboard') }}" class="btn">Go to Dashboard</a>
-                {% endif %}
-            </div>
+            <h1>Welcome to <span>A.R. Engineering</span></h1>
+            <p>Your trusted partner for all types of engineering works and digital invoice generation.</p>
+
+            {% if session.get('username') %}
+            <a href="{{ url_for('dashboard') }}" class="btn-primary">Go to Dashboard</a>
+            {% else %}
+            <a href="#services" class="btn-primary">Explore Services</a>
+            {% endif %}
         </div>
     </section>
 
@@ -75,8 +78,46 @@
     <!-- ===== About Section ===== -->
     <section class="about" id="about">
         <h2>About A.R.Engineering</h2>
-        <p>We provide smart and easy-to-use digital solutions for engineers and businesses. Our platform allows you to generate invoices online, maintain client records, and manage payments efficiently. Focus on your work, we handle the paperwork digitally!</p>
+        <p>We provide smart and easy-to-use digital solutions for engineers and businesses. Our platform allows you to
+            generate invoices online, maintain client records, and manage payments efficiently. Focus on your work, we
+            handle the paperwork digitally!</p>
     </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="contact-container">
+            <h2>Contact Us</h2>
+            <p>Have any questions or need assistance? Feel free to reach out to us!</p>
+
+            <div class="contact-grid">
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <p><strong>Address:</strong> A.R. Engineering, Mumbai, Maharashtra</p>
+                    <p><strong>Phone:</strong> +91 98765 43210</p>
+                    <p><strong>Email:</strong> support@arengineering.com</p>
+                    <p><strong>Working Hours:</strong> Mon - Sat, 9:00 AM - 6:00 PM</p>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form">
+                    <form action="https://formspree.io/f/mwkwzprz" method="POST">
+                        <div class="form-group">
+                            <input type="text" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="contact-btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
 
     <!-- ===== Footer ===== -->
     <footer>
@@ -84,4 +125,5 @@
     </footer>
 
 </body>
+
 </html>
