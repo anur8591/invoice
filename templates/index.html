@@ -43,7 +43,7 @@
             {% if session.get('username') %}
             <a href="{{ url_for('dashboard') }}" class="btn-primary">Go to Dashboard</a>
             {% else %}
-            <a href="#services" class="btn-primary">Explore Services</a>
+            <a href="{{ url_for('login') }}" class="btn-primary">Explore Services</a>
             {% endif %}
         </div>
     </section>
@@ -52,28 +52,38 @@
     <section class="features" id="features">
         <h2>Our Features</h2>
         <div class="feature-cards">
-            <div class="feature-card">
+
+            <!-- Create Invoice -->
+            <a href="/create_invoice" class="feature-card link-card">
                 <i class="fa-solid fa-file-invoice fa-3x"></i>
-                <h3>Create Invoices</h3>
+                <h3>Create Invoice</h3>
                 <p>Easily generate professional invoices for your clients.</p>
-            </div>
-            <div class="feature-card">
+            </a>
+
+            <!-- Track History -->
+            <a href="/invoices" class="feature-card link-card">
                 <i class="fa-solid fa-folder-open fa-3x"></i>
                 <h3>Track History</h3>
                 <p>Keep a record of all past invoices for future reference.</p>
-            </div>
-            <div class="feature-card">
+            </a>
+
+            <!-- Analytics -->
+            <a href="/analytics" class="feature-card link-card">
                 <i class="fa-solid fa-chart-line fa-3x"></i>
                 <h3>Analytics</h3>
                 <p>Get insights into your income and invoices over time.</p>
-            </div>
-            <div class="feature-card">
+            </a>
+
+            <!-- Secure Data -->
+            <a href="/security" class="feature-card link-card">
                 <i class="fa-solid fa-lock fa-3x"></i>
                 <h3>Secure Data</h3>
                 <p>Your client data and invoices are stored safely and securely.</p>
-            </div>
+            </a>
+
         </div>
     </section>
+
 
     <!-- ===== About Section ===== -->
     <section class="about" id="about">
@@ -83,6 +93,31 @@
             handle the paperwork digitally!</p>
     </section>
 
+    <!-- ===== Services Section ===== -->
+    <section class="services" id="services">
+        <h2>Our Services</h2>
+        <div class="service-cards">
+            <div class="service-card">
+                <i class="fa-solid fa-screwdriver-wrench fa-3x"></i>
+                <h3>Mechanical Engineering Works</h3>
+                <p>High-quality fabrication, repairing, and engineering solutions.</p>
+            </div>
+
+            <div class="service-card">
+                <i class="fa-solid fa-file-invoice-dollar fa-3x"></i>
+                <h3>Digital Invoice System</h3>
+                <p>Create, manage, and download GST-ready invoices instantly.</p>
+            </div>
+
+            <div class="service-card">
+                <i class="fa-solid fa-gears fa-3x"></i>
+                <h3>Machine Maintenance</h3>
+                <p>Complete maintenance for industrial and workshop machinery.</p>
+            </div>
+        </div>
+    </section>
+
+
     <!-- Contact Section -->
     <section id="contact" class="contact-section">
         <div class="contact-container">
@@ -90,18 +125,46 @@
             <p>Have any questions or need assistance? Feel free to reach out to us!</p>
 
             <div class="contact-grid">
+
                 <!-- Contact Info -->
                 <div class="contact-info">
                     <h3>Get in Touch</h3>
-                    <p><strong>Address:</strong> A.R. Engineering, Mumbai, Maharashtra</p>
-                    <p><strong>Phone:</strong> +91 98765 43210</p>
-                    <p><strong>Email:</strong> support@arengineering.com</p>
+                    <p><strong>Name:</strong> A.R. Engineering</p>
+                    <p><strong>Address:</strong> Gala No. A-9,
+                        Deewan & Shah Industrial Estate No.2A,
+                        Navghar, Vasai (East),
+                        Maharashtra,
+                        India</p>
+                    <p><strong>Phone:</strong> +91 885001539</p>
+                    <p><strong>Email:</strong> arengineering7387@gmail.com</p>
                     <p><strong>Working Hours:</strong> Mon - Sat, 9:00 AM - 6:00 PM</p>
                 </div>
 
                 <!-- Contact Form -->
                 <div class="contact-form">
-                    <form action="https://formspree.io/f/mwkwzprz" method="POST">
+
+                    <!-- Success Message -->
+                    {% if success_message %}
+                    <p class="success-alert" id="successMessage">Your message was sent successfully!</p>
+
+                    <script>
+                        // Auto hide in 3 seconds
+                        setTimeout(() => {
+                            const msg = document.getElementById("successMessage");
+                            if (msg) msg.style.display = "none";
+                        }, 3000);
+
+                        // Scroll to contact only IF success=1 is in URL
+                        if (window.location.search.includes("success=1")) {
+                            window.location.hash = "contact";
+                        }
+                    </script>
+
+                    {% endif %}
+
+
+
+                    <form action="/contact_submit" method="POST">
                         <div class="form-group">
                             <input type="text" name="name" placeholder="Your Name" required>
                         </div>
@@ -113,16 +176,26 @@
                         </div>
                         <button type="submit" class="contact-btn">Send Message</button>
                     </form>
+
                 </div>
             </div>
         </div>
     </section>
 
 
+
     <!-- ===== Footer ===== -->
     <footer>
         <p>&copy; 2025 A.R.Engineering. All rights reserved.</p>
     </footer>
+
+
+
+    {% if scroll_to_contact %}
+    <script>
+        window.location.hash = "contact";
+    </script>
+    {% endif %}
 
 </body>
 

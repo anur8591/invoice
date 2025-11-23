@@ -3,200 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 25px;
-            font-size: 14px;
+        body { font-family: Arial, sans-serif; margin: 25px; font-size: 14px; }
+        .header { text-align: center; font-weight: bold; }
+        .sub-header, .address { text-align: center; font-size: 13px; margin-top: 4px; }
+        .items-table, .section-table, .totals-table {
+            width: 100%; border-collapse: collapse; margin-top: 15px;
         }
-
-        .header {
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .header h2 {
-            margin: 0;
-            padding: 0;
-        }
-
-        .sub-header {
-            text-align: center;
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        .address {
-            text-align: center;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        .section-table, .items-table, .totals-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 12px;
-        }
-
-        .section-table td {
-            padding: 4px;
-        }
-
         .items-table th, .items-table td {
-            border: 1px solid black;
-            padding: 6px;
-            text-align: center;
-            font-size: 13px;
+            border: 1px solid black; padding: 6px; text-align: center;
         }
-
-        .totals-table td {
-            padding: 6px;
-            font-size: 14px;
-        }
-
-        .right {
-            text-align: right;
-        }
-
-        hr {
-            margin-top: 25px;
-            margin-bottom: 10px;
-        }
-
-        .signature {
-            margin-top: 50px;
-            text-align: right;
-            font-weight: bold;
-        }
-
-        .footer-note {
-            font-size: 11px;
-            margin-top: 25px;
-        }
+        .right { text-align: right; }
+        hr { margin: 20px 0; }
+        .signature { text-align: right; margin-top: 40px; }
     </style>
 </head>
+
 <body>
 
-<!-- HEADER -->
-<div class="header">
-    <h2>A.R. ENGINEERING</h2>
-</div>
-
-<div class="sub-header">
-    WE UNDERTAKE ALL TYPE OF ENGINEERING WORKS
-</div>
-
+<div class="header"><h2>A.R. ENGINEERING</h2></div>
+<div class="sub-header">WE UNDERTAKE ALL TYPE OF ENGINEERING WORKS</div>
 <div class="address">
-    Gala No. A-9, Deewan & Shah Industrial Estate No. 2A, Navghar, Vasai (East) <br>
-    Email: arengineering7387@gmail.com <br>
-    GSTIN: 27BRJPP0821M1ZH
+    Gala No. A-9, Deewan & Shah Industrial Estate, Navghar, Vasai (East)<br>
+    Email: arengineering7387@gmail.com | GSTIN: 27BRJPP0821M1ZH
 </div>
 
 <hr>
 
-<!-- CUSTOMER + INVOICE DETAILS -->
 <table class="section-table">
-    <tr>
-        <td><b>M/s:</b> {{ data.customer_name }}</td>
-        <td><b>GST Invoice No:</b> {{ data.gst_invoice_no }}</td>
-        <td><b>Date:</b> {{ data.date }}</td>
-    </tr>
-
-    <tr>
-        <td><b>GST Challan No:</b> ————</td>
-        <td><b>Date:</b> ————</td>
-        <td></td>
-    </tr>
-
-    <tr>
-        <td><b>State Code:</b> 27</td>
-        <td><b>Party GST No:</b> ————</td>
-        <td></td>
-    </tr>
+<tr>
+    <td><b>M/s:</b> {{ data.customer_name }}</td>
+    <td><b>GST Invoice No:</b> {{ data.gst_invoice_no }}</td>
+    <td><b>Date:</b> {{ data.date }}</td>
+</tr>
 </table>
 
 <!-- ITEMS TABLE -->
 <table class="items-table">
-    <thead>
-    <tr>
-        <th>Sr No</th>
-        <th>Description of Goods</th>
-        <th>HSN Code</th>
-        <th>Quantity</th>
-        <th>Rate</th>
-        <th>Amount (Rs.)</th>
-    </tr>
-    </thead>
-    <tbody>
+<thead>
+<tr>
+    <th>Sr No</th>
+    <th>Description</th>
+    <th>HSN</th>
+    <th>Qty</th>
+    <th>Rate</th>
+    <th>Amount</th>
+</tr>
+</thead>
 
-    {% set total = 0 %}
-    {% for i in range(data.description|length) %}
-        {% set amt = (data.quantity[i]|float) * (data.rate[i]|float) %}
-        {% set total = total + amt %}
-        <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ data.description[i] }}</td>
-            <td>{{ data.hsn_code[i] }}</td>
-            <td>{{ data.quantity[i] }}</td>
-            <td>{{ "%.2f"|format(data.rate[i]|float) }}</td>
-            <td>{{ "%.2f"|format(amt) }}</td>
-        </tr>
-    {% endfor %}
-
-    </tbody>
+<tbody>
+{% for item in data['items'] %}
+<tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ item.description }}</td>
+    <td>{{ item.hsn }}</td>
+    <td>{{ item.qty }}</td>
+    <td>{{ "%.2f"|format(item.rate) }}</td>
+    <td>{{ "%.2f"|format(item.amount) }}</td>
+</tr>
+{% endfor %}
+</tbody>
 </table>
 
 <hr>
-
-<!-- TOTALS SECTION -->
-{% set cgst = total * (data.cgst_rate|float) / 100 %}
-{% set sgst = total * (data.sgst_rate|float) / 100 %}
-{% set grand_total = total + cgst + sgst %}
 
 <table class="totals-table">
-    <tr>
-        <td><b>Total Value:</b></td>
-        <td class="right"><b>₹ {{ "%.2f"|format(total) }}</b></td>
-    </tr>
-
-    <tr>
-        <td>Add: CGST @ {{ data.cgst_rate }}%</td>
-        <td class="right">₹ {{ "%.2f"|format(cgst) }}</td>
-    </tr>
-
-    <tr>
-        <td>Add: SGST @ {{ data.sgst_rate }}%</td>
-        <td class="right">₹ {{ "%.2f"|format(sgst) }}</td>
-    </tr>
-
-    <tr>
-        <td><b>Grand Total:</b></td>
-        <td class="right"><b>₹ {{ "%.2f"|format(grand_total) }}</b></td>
-    </tr>
+<tr>
+    <td><b>Total Amount:</b></td>
+    <td class="right"><b>₹ {{ "%.2f"|format(data.total_value) }}</b></td>
+</tr>
+<tr>
+    <td>CGST ({{ data.cgst_rate }}%)</td>
+    <td class="right">₹ {{ "%.2f"|format(data.cgst_amount) }}</td>
+</tr>
+<tr>
+    <td>SGST ({{ data.sgst_rate }}%)</td>
+    <td class="right">₹ {{ "%.2f"|format(data.sgst_amount) }}</td>
+</tr>
+<tr>
+    <td><b>Grand Total</b></td>
+    <td class="right"><b>₹ {{ "%.2f"|format(data.grand_total) }}</b></td>
+</tr>
 </table>
 
 <hr>
 
-<!-- BANK DETAILS -->
 <h4>Bank Details</h4>
-<p>
-    <b>Bank Name:</b> {{ data.bank_name }}<br>
-    <b>Branch:</b> {{ data.branch }}<br>
-    <b>A/C No:</b> {{ data.account_no }}<br>
-    <b>IFSC:</b> {{ data.ifsc }}
-</p>
+<b>Bank:</b> {{ data.bank_name }}<br>
+<b>Branch:</b> {{ data.branch }}<br>
+<b>A/C No:</b> {{ data.account_no }}<br>
+<b>IFSC:</b> {{ data.ifsc }}<br>
 
-<!-- TERMS -->
-<div class="footer-note">
-    <b>Terms & Conditions:</b><br>
-    1. Interest @24% p.a. will be charged if payment is not made within 30 days. <br>
-    2. Goods once sold will not be taken back or exchanged. <br>
-    3. No claim will be entertained unless made within 7 days. <br>
-    4. Subject to Vasai jurisdiction.
-</div>
-
-<!-- SIGNATURE -->
 <div class="signature">
-    For A.R. ENGINEERING <br><br><br>
+    For A.R. ENGINEERING<br><br><br>
     _______________________
 </div>
 

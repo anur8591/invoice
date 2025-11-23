@@ -1,35 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | A.R. Engineering</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: #0d6efd;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .navbar .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links li a:hover {
+            text-decoration: underline;
+        }
+
+        /* CONTENT */
+        .dashboard-content {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .dashboard-content h2 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .dashboard-content p {
+            color: #555;
+            font-size: 16px;
+        }
+
+        /* CARDS */
+        .card-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            width: 250px;
+            height: 150px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 20px;
+            color: black;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s ease;
+        }
+
+        .card:hover {
+            background: #0d6efd;
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        /* MOBILE */
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .card-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .card {
+                width: 90%;
+            }
+        }
+    </style>
 </head>
+
 <body>
+
+    <!-- NAVBAR -->
     <header>
         <nav class="navbar">
             <div class="logo">A.R. Engineering 🧾</div>
             <ul class="nav-links">
                 <li><a href="/dashboard">Home</a></li>
-                <li><a href="#">Invoices</a></li>
-                <li><a href="#">Profile</a></li>
+                <li><a href="/create_invoice">Create Invoice</a></li>
+                <li><a href="#">View Invoices</a></li>
                 <li><a href="/logout">Logout</a></li>
             </ul>
         </nav>
     </header>
 
+    <!-- MAIN CONTENT -->
     <main class="dashboard-content">
-        <h2>Welcome, {{ username }} 👋</h2>
-        <p>Here you can manage and generate your digital invoices.</p>
 
-    <div class="card-container">
-        <a href="{{ url_for('create_invoice') }}" class="card">🧾 Create New Invoice</a>
-        <a href="#" class="card">📁 View Saved Invoices</a>
-        <a href="#" class="card">⚙️ Settings</a>
-    </div>
+        <h2>Welcome, {{ username }} 👋</h2>
+        <p>Your invoicing hub — manage, create and download invoices easily.</p>
+
+        <div class="card-container">
+            <a href="{{ url_for('create_invoice') }}" class="card">🧾 Create New Invoice</a>
+            <a href="#" class="card">📁 View Saved Invoices</a>
+            <a href="#" class="card">⚙️ Settings</a>
+        </div>
 
     </main>
+
 </body>
+
 </html>
