@@ -327,3 +327,70 @@ footer {
 .logout-btn:hover {
   background-color: #c0392b;
 }
+
+/* ===== MOBILE RESPONSIVE FIX ===== */
+@media (max-width: 768px) {
+
+    /* Navbar */
+    .navbar {
+        padding: 15px 20px;
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .hero {
+        height: auto;
+        padding: 40px 20px;
+    }
+
+    /* Feature cards spacing */
+    .feature-card {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    /* Services section mobile fix */
+    .services h2 {
+        font-size: 2rem;
+    }
+
+    .service-card {
+        padding: 20px;
+    }
+
+    /* Contact section mobile fix */
+    .contact-grid {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+
+    .contact-form form,
+    .contact-info {
+        padding: 20px;
+    }
+
+    .contact-section h2 {
+        font-size: 2rem;
+    }
+
+    /* Footer fix */
+    footer {
+        font-size: 0.9rem;
+        padding: 15px;
+    }
+}
