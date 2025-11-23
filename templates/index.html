@@ -145,22 +145,27 @@
 
                     <!-- Success Message -->
                     {% if success_message %}
-                    <p class="success-alert" id="successMessage">Your message was sent successfully!</p>
+<p class="success-alert" id="successMessage">{{ success_message }}</p>
 
-                    <script>
-                        // Auto hide in 3 seconds
-                        setTimeout(() => {
-                            const msg = document.getElementById("successMessage");
-                            if (msg) msg.style.display = "none";
-                        }, 3000);
+<script>
+    // Auto-hide message
+    setTimeout(() => {
+        const msg = document.getElementById("successMessage");
+        if (msg) msg.style.display = "none";
+    }, 3000);
 
-                        // Scroll to contact only IF success=1 is in URL
-                        if (window.location.search.includes("success=1")) {
-                            window.location.hash = "contact";
-                        }
-                    </script>
+    // Scroll to contact on first load
+    window.location.hash = "contact";
 
-                    {% endif %}
+    // REMOVE ?success=1 from URL so refresh doesn't show message again
+    if (window.history.replaceState) {
+        const cleanUrl = window.location.origin + window.location.pathname + "#contact";
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+</script>
+{% endif %}
+
+
 
 
 

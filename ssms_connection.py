@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, session, send_file
+from flask import Flask, request, render_template, redirect, session, send_file, url_for
 import pyodbc
 import io
 import pdfkit
@@ -66,12 +66,15 @@ def generate_invoice_no():
 # ---------------------------------------
 @app.route("/")
 def home():
-    success_message = None
+    # Read success flag
+    success = request.args.get("success")
 
-    if request.args.get("success") == "1":
-        success_message = "Your message was sent successfully!"
+    return render_template(
+        "index.html",
+        success_message="Your message was sent successfully!" if success == "1" else None
+    )
 
-    return render_template("index.html", success_message=success_message)
+
 
 
 # ---------------------------------------
@@ -160,8 +163,9 @@ def contact_submit():
 
     send_contact_email(name, email, message)
 
-    # REDIRECT - prevents re-submission on refresh
-    return redirect("/?success=1#contact")
+    # Redirect prevents form resubmission on refresh
+    return redirect(url_for("home") + "?success=1#contact")
+
 
 
 
