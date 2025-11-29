@@ -7,7 +7,7 @@ import random
 import string
 from datetime import datetime
 import smtplib
-from email.mime.text import MIMEText 
+from email.mime.text import MIMEText
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
@@ -16,8 +16,8 @@ app.secret_key = 'your_secret_key_here'
 # EMAIL FUNCTION
 # ---------------------------------------
 def send_contact_email(name, email, message):
-    sender_email = "palanurag595@gmail.com"       #"arengineering7387@gmail.com"
-    app_password = "qjxrwxidreqwdlzu"  # 16-digit Gmail app password
+    sender_email = "palanurag595@gmail.com"
+    app_password = "qjxrwxidreqwdlzu"
 
     body = f"""
     New Contact Form A.R. Engineering:
@@ -37,7 +37,6 @@ def send_contact_email(name, email, message):
         server.login(sender_email, app_password)
         server.sendmail(sender_email, sender_email, msg.as_string())
 
-
 # ---------------------------------------
 # SQL CONNECTION
 # ---------------------------------------
@@ -53,8 +52,7 @@ def get_db():
     return pyodbc.connect(conn_str)
 
 # ---------------------------------------
-# GENERATE UNIQUE INVOICE NUMBER
-# Example: INV-20250121-5824
+# GENERATE UNIQUE INVOICE NO
 # ---------------------------------------
 def generate_invoice_no():
     date_part = datetime.now().strftime("%Y%m%d")
@@ -66,16 +64,11 @@ def generate_invoice_no():
 # ---------------------------------------
 @app.route("/")
 def home():
-    # Read success flag
     success = request.args.get("success")
-
     return render_template(
         "index.html",
         success_message="Your message was sent successfully!" if success == "1" else None
     )
-
-
-
 
 # ---------------------------------------
 # REGISTER
@@ -93,7 +86,7 @@ def register():
                     (username, email, password))
         conn.commit()
         conn.close()
-        return "Registration successful! You can now login."
+        return redirect("/login")
 
     return render_template("register.html")
 
@@ -139,18 +132,14 @@ def logout():
     session.clear()
     return redirect("/login")
 
-
 # ---------------------------------------
-# EXTRA PAGES FROM FEATURES SECTION
+# SETTINGS PAGE
 # ---------------------------------------
-@app.route("/analytics")
-def analytics_page():
-    return "<h2>Analytics Page Coming Soon...</h2>"
-
-@app.route("/security")
-def security_page():
-    return "<h2>Security & Data Protection Info Coming Soon...</h2>"
-
+@app.route("/settings")
+def settings():
+    if 'user_id' not in session:
+        return redirect("/login")
+    return render_template("settings.html")
 
 # ---------------------------------------
 # CONTACT FORM SUBMISSION
@@ -163,11 +152,7 @@ def contact_submit():
 
     send_contact_email(name, email, message)
 
-    # Redirect prevents form resubmission on refresh
     return redirect(url_for("home") + "?success=1#contact")
-
-
-
 
 # ---------------------------------------
 # CREATE INVOICE
@@ -175,13 +160,9 @@ def contact_submit():
 @app.route("/create_invoice", methods=["GET", "POST"])
 def create_invoice():
     if request.method == "POST":
-
-        # auto invoice no
         gst_invoice_no = generate_invoice_no()
 
-        # collect form fields
         form_data = request.form.to_dict(flat=False)
-
         descriptions = form_data.get("description[]", [])
         hsn_codes = form_data.get("hsn_code[]", [])
         quantities = form_data.get("quantity[]", [])
@@ -204,7 +185,6 @@ def create_invoice():
                 "amount": amount
             })
 
-        # TAX
         cgst_rate = float(request.form.get("cgst_rate", 0))
         sgst_rate = float(request.form.get("sgst_rate", 0))
 
@@ -213,15 +193,13 @@ def create_invoice():
 
         grand_total = total_value + cgst_amount + sgst_amount
 
-        # SAVE INTO DATABASE (correct columns)
         conn = get_db()
         cur = conn.cursor()
 
         cur.execute("""
             INSERT INTO Invoices
             (customer_name, gst_invoice_no, date,
-             items_json,
-             total_value, cgst_rate, cgst_amount,
+             items_json, total_value, cgst_rate, cgst_amount,
              sgst_rate, sgst_amount, grand_total,
              bank_name, branch, account_no, ifsc)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -229,16 +207,13 @@ def create_invoice():
             request.form.get("customer_name"),
             gst_invoice_no,
             request.form.get("date"),
-
-            json.dumps(items),  # items stored as JSON
-
+            json.dumps(items),
             total_value,
             cgst_rate,
             cgst_amount,
             sgst_rate,
             sgst_amount,
             grand_total,
-
             request.form.get("bank_name"),
             request.form.get("branch"),
             request.form.get("account_no"),
@@ -248,7 +223,6 @@ def create_invoice():
         conn.commit()
         conn.close()
 
-        # render pdf
         invoice_data = {
             "customer_name": request.form.get("customer_name"),
             "gst_invoice_no": gst_invoice_no,
@@ -283,24 +257,42 @@ def create_invoice():
     return render_template("invoice_form.html")
 
 # ---------------------------------------
+# FIX: ADD THIS MISSING ROUTE
+# ---------------------------------------
+@app.route("/view_invoices")
+def view_invoices():
+    return redirect("/invoices")
+
+# ---------------------------------------
 # VIEW ALL INVOICES
 # ---------------------------------------
 @app.route("/invoices")
-def view_invoices():
+def invoices():
     conn = get_db()
     cur = conn.cursor()
 
     cur.execute("SELECT id, customer_name, gst_invoice_no, date, grand_total FROM Invoices ORDER BY id DESC")
-    data = cur.fetchall()
-
+    rows = cur.fetchall()
     conn.close()
-    return render_template("invoice_list.html", invoices=data)
+
+    invoices = []
+    for r in rows:
+        invoices.append({
+            "id": r[0],
+            "client": r[1],
+            "gst": r[2],
+            "date": r[3],
+            "total": r[4]
+        })
+
+    return render_template("invoice_list.html", invoices=invoices)
 
 # ---------------------------------------
-# DOWNLOAD OLD INVOICE
+# DOWNLOAD INVOICE
 # ---------------------------------------
 @app.route("/invoice/<int:id>/download")
 def download_invoice(id):
+
     conn = get_db()
     cur = conn.cursor()
 
@@ -311,8 +303,7 @@ def download_invoice(id):
     if not inv:
         return "Invoice not found!"
 
-    # correct mapping
-    items = json.loads(inv[4])   # items_json
+    items = json.loads(inv[4])
 
     invoice_data = {
         "customer_name": inv[1],

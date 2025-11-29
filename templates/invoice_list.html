@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Invoices</title>
+
+    <style>
+        body {
+            background: #f4f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .table-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .download-btn {
+            background: #198754;
+            padding: 6px 12px;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .download-btn:hover {
+            background: #157347;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="table-container">
+        <h2>📁 Saved Invoices</h2>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.id }}</td>
+                <td>{{ invoice.client }}</td>
+                <td>{{ invoice.date }}</td>
+                <td>₹{{ invoice.total }}</td>
+                <td>
+                    <a href="/invoice/{{ invoice.id }}/download" class="download-btn">Download PDF</a>
+
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+</body>
+
+</html>
