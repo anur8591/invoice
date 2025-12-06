@@ -24,17 +24,30 @@
 <div class="sub-header">WE UNDERTAKE ALL TYPE OF ENGINEERING WORKS</div>
 <div class="address">
     Gala No. A-9, Deewan & Shah Industrial Estate, Navghar, Vasai (East)<br>
-    Email: arengineering7387@gmail.com | GSTIN: 27BRJPP0821M1ZH
+    Email: arengineering7387@gmail.com <br>
+    GSTIN No: 27BRJPP0821M1ZH
 </div>
 
 <hr>
 
+<!-- ========== CUSTOMER + INVOICE DETAILS ========== -->
+
 <table class="section-table">
 <tr>
     <td><b>M/s:</b> {{ data.customer_name }}</td>
+    
     <td><b>GST Invoice No:</b> {{ data.gst_invoice_no }}</td>
     <td><b>Date:</b> {{ data.date }}</td>
 </tr>
+
+<!-- New row for Party GST Number (only show if provided) -->
+{% if data.party_gst %}
+<tr>
+    <td><b>Party GST No:</b> {{ data.party_gst }}</td>
+    <td></td>
+    <td></td>
+</tr>
+{% endif %}
 </table>
 
 <!-- ITEMS TABLE -->

@@ -13,6 +13,11 @@
             font-weight: bold;
             font-size: 18px;
         }
+        .remove-row-btn {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -27,18 +32,25 @@
             <!-- TOP FIELDS -->
             <div class="row">
                 <div class="col-md-6">
-                    <label>Customer Name</label>
+                    <label><b>Customer Name</b></label>
                     <input class="form-control" name="customer_name" required>
                 </div>
 
                 <div class="col-md-3">
-                    <label>Invoice No</label>
+                    <label><b>Invoice No</b></label>
                     <input class="form-control" name="gst_invoice_no" id="invoice_no" readonly>
                 </div>
 
                 <div class="col-md-3">
-                    <label>Date</label>
+                    <label><b>Date</b></label>
                     <input type="date" class="form-control" name="date" required>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <label><b>Party GST Number</b> (Optional)</label>
+                    <input class="form-control" name="party_gst" placeholder="Enter GST No">
                 </div>
             </div>
 
@@ -54,6 +66,7 @@
                         <th>Qty</th>
                         <th>Rate</th>
                         <th>Amount</th>
+                        <th>Remove</th>
                     </tr>
                 </thead>
 
@@ -61,10 +74,12 @@
                     <tr>
                         <td><input class="form-control" name="description[]" required></td>
                         <td><input class="form-control" name="hsn_code[]"></td>
-                        <td><input type="number" name="quantity[]" class="form-control qty" min="1" step="1" value="1">
-                        </td>
-                        <td><input type="number" name="rate[]" class="form-control rate" step="0.01" value="0.00"></td>
+                        <td><input type="number" name="quantity[]" class="form-control qty" min="1" step="1"
+                                value="1"></td>
+                        <td><input type="number" name="rate[]" class="form-control rate" step="0.01"
+                                value="0.00"></td>
                         <td class="amount">0.00</td>
+                        <td class="text-center">—</td>
                     </tr>
                 </tbody>
             </table>
@@ -129,7 +144,7 @@
     </div>
 
     <script>
-        // Auto-generate random invoice number (non-repeatable format)
+        // Auto-generate random invoice number
         function generateInvoiceNo() {
             let randomNum = Math.floor(100000 + Math.random() * 900000);
             let invoice = "ARINV-" + randomNum;
@@ -140,13 +155,21 @@
         // Add item row
         $("#add-row").click(() => {
             $("#items-table tbody").append(`
-    <tr>
-      <td><input class="form-control" name="description[]" required></td>
-      <td><input class="form-control" name="hsn_code[]"></td>
-      <td><input type="number" name="quantity[]" class="form-control qty" min="1" step="1" value="1"></td>
-      <td><input type="number" name="rate[]" class="form-control rate" step="0.01" value="0.00"></td>
-      <td class="amount">0.00</td>
-    </tr>`);
+                <tr>
+                    <td><input class="form-control" name="description[]" required></td>
+                    <td><input class="form-control" name="hsn_code[]"></td>
+                    <td><input type="number" name="quantity[]" class="form-control qty" min="1" step="1" value="1"></td>
+                    <td><input type="number" name="rate[]" class="form-control rate" step="0.01" value="0.00"></td>
+                    <td class="amount">0.00</td>
+                    <td class="text-center remove-row-btn">❌</td>
+                </tr>
+            `);
+        });
+
+        // Remove row
+        $(document).on("click", ".remove-row-btn", function () {
+            $(this).closest("tr").remove();
+            calculateTotal();
         });
 
         // Recalculate totals
@@ -157,6 +180,7 @@
                 let qty = parseFloat($(this).find(".qty").val()) || 0;
                 let rate = parseFloat($(this).find(".rate").val()) || 0;
                 let amt = qty * rate;
+
                 $(this).find(".amount").text(amt.toFixed(2));
                 total += amt;
             });
