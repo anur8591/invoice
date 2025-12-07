@@ -13,6 +13,7 @@
             font-weight: bold;
             font-size: 18px;
         }
+
         .remove-row-btn {
             cursor: pointer;
             color: red;
@@ -37,8 +38,8 @@
                 </div>
 
                 <div class="col-md-3">
-                    <label><b>Invoice No</b></label>
-                    <input class="form-control" name="gst_invoice_no" id="invoice_no" readonly>
+                    <label><b>Invoice No (Auto)</b></label>
+                    <input class="form-control" name="gst_invoice_no" id="invoice_no" readonly required>
                 </div>
 
                 <div class="col-md-3">
@@ -50,7 +51,7 @@
             <div class="row mt-3">
                 <div class="col-md-4">
                     <label><b>Party GST Number</b> (Optional)</label>
-                    <input class="form-control" name="party_gst" placeholder="Enter GST No">
+                    <input class="form-control" name="party_gst_no" placeholder="Enter GST No">
                 </div>
             </div>
 
@@ -74,10 +75,9 @@
                     <tr>
                         <td><input class="form-control" name="description[]" required></td>
                         <td><input class="form-control" name="hsn_code[]"></td>
-                        <td><input type="number" name="quantity[]" class="form-control qty" min="1" step="1"
-                                value="1"></td>
-                        <td><input type="number" name="rate[]" class="form-control rate" step="0.01"
-                                value="0.00"></td>
+                        <td><input type="number" name="quantity[]" class="form-control qty" min="1" step="1" value="1">
+                        </td>
+                        <td><input type="number" name="rate[]" class="form-control rate" step="0.01" value="0.00"></td>
                         <td class="amount">0.00</td>
                         <td class="text-center">—</td>
                     </tr>
@@ -144,13 +144,16 @@
     </div>
 
     <script>
-        // Auto-generate random invoice number
-        function generateInvoiceNo() {
-            let randomNum = Math.floor(100000 + Math.random() * 900000);
-            let invoice = "ARINV-" + randomNum;
-            $("#invoice_no").val(invoice);
+        // Fetch UNIQUE invoice number from backend
+        function loadInvoiceNumber() {
+            $.get("/generate_unique_invoice", function (data) {
+                $("#invoice_no").val(data.invoice_no);
+            }).fail(function () {
+                alert("Error generating invoice number!");
+            });
         }
-        generateInvoiceNo();
+
+        loadInvoiceNumber();
 
         // Add item row
         $("#add-row").click(() => {

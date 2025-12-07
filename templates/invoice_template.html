@@ -15,6 +15,7 @@
         .right { text-align: right; }
         hr { margin: 20px 0; }
         .signature { text-align: right; margin-top: 40px; }
+        .terms { font-size: 12px; margin-top: 30px; }
     </style>
 </head>
 
@@ -35,15 +36,13 @@
 <table class="section-table">
 <tr>
     <td><b>M/s:</b> {{ data.customer_name }}</td>
-    
     <td><b>GST Invoice No:</b> {{ data.gst_invoice_no }}</td>
     <td><b>Date:</b> {{ data.date }}</td>
 </tr>
 
-<!-- New row for Party GST Number (only show if provided) -->
-{% if data.party_gst %}
+{% if data.party_gst_no %}
 <tr>
-    <td><b>Party GST No:</b> {{ data.party_gst }}</td>
+    <td><b>Party GST No:</b> {{ data.party_gst_no }}</td>
     <td></td>
     <td></td>
 </tr>
@@ -64,7 +63,7 @@
 </thead>
 
 <tbody>
-{% for item in data['items'] %}
+{% for item in data["items"] %}
 <tr>
     <td>{{ loop.index }}</td>
     <td>{{ item.description }}</td>
@@ -105,6 +104,17 @@
 <b>Branch:</b> {{ data.branch }}<br>
 <b>A/C No:</b> {{ data.account_no }}<br>
 <b>IFSC:</b> {{ data.ifsc }}<br>
+
+<!-- TERMS & CONDITIONS -->
+<div class="terms">
+    <h4>Terms & Conditions</h4>
+    1. Interest @24% p.a. will be charged if payment is not made within 30 days.<br>
+    2. Product once sold will not be taken back or exchanged under any circumstances.<br>
+    3. Do not hand over any product to any person on our behalf without written permission.<br>
+    4. We reserve lien on the product supplied until full payment is received.<br>
+    5. Cheque accepted subject to realization.<br>
+    6. Subject to Mumbai Jurisdiction.<br>
+</div>
 
 <div class="signature">
     For A.R. ENGINEERING<br><br><br>

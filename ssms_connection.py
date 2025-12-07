@@ -12,6 +12,7 @@ from email.mime.text import MIMEText
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
+
 # ---------------------------------------
 # EMAIL FUNCTION
 # ---------------------------------------
@@ -37,6 +38,7 @@ def send_contact_email(name, email, message):
         server.login(sender_email, app_password)
         server.sendmail(sender_email, sender_email, msg.as_string())
 
+
 # ---------------------------------------
 # SQL CONNECTION
 # ---------------------------------------
@@ -51,13 +53,25 @@ conn_str = (
 def get_db():
     return pyodbc.connect(conn_str)
 
+
 # ---------------------------------------
-# GENERATE UNIQUE INVOICE NO
+# GENERATE UNIQUE INVOICE NO (FIXED)
 # ---------------------------------------
-def generate_invoice_no():
-    date_part = datetime.now().strftime("%Y%m%d")
-    rand_part = ''.join(random.choices(string.digits, k=4))
-    return f"INV-{date_part}-{rand_part}"
+def generate_unique_invoice_no():
+    conn = get_db()
+    cur = conn.cursor()
+
+    while True:
+        new_no = str(random.randint(100000, 999999))  # MUST be string
+
+        cur.execute("SELECT COUNT(*) FROM Invoices WHERE gst_invoice_no=?", (new_no,))
+        exists = cur.fetchone()[0]
+
+        if exists == 0:
+            conn.close()
+            return new_no
+
+
 
 # ---------------------------------------
 # HOME PAGE
@@ -69,6 +83,7 @@ def home():
         "index.html",
         success_message="Your message was sent successfully!" if success == "1" else None
     )
+
 
 # ---------------------------------------
 # REGISTER
@@ -90,6 +105,8 @@ def register():
 
     return render_template("register.html")
 
+
+
 # ---------------------------------------
 # LOGIN
 # ---------------------------------------
@@ -109,11 +126,12 @@ def login():
         if user:
             session["user_id"] = user[0]
             session["username"] = user[1]
-            return redirect("/dashboard")
+            return redirect("/")  
         else:
             return "Invalid username or password!"
 
     return render_template("login.html")
+
 
 # ---------------------------------------
 # DASHBOARD
@@ -124,6 +142,8 @@ def dashboard():
         return redirect("/login")
     return render_template("dashboard.html", username=session["username"])
 
+
+
 # ---------------------------------------
 # LOGOUT
 # ---------------------------------------
@@ -132,14 +152,18 @@ def logout():
     session.clear()
     return redirect("/login")
 
+
+
 # ---------------------------------------
-# SETTINGS PAGE
+# SETTINGS
 # ---------------------------------------
 @app.route("/settings")
 def settings():
     if 'user_id' not in session:
         return redirect("/login")
     return render_template("settings.html")
+
+
 
 # ---------------------------------------
 # CONTACT FORM SUBMISSION
@@ -154,13 +178,15 @@ def contact_submit():
 
     return redirect(url_for("home") + "?success=1#contact")
 
+
+
 # ---------------------------------------
 # CREATE INVOICE
 # ---------------------------------------
 @app.route("/create_invoice", methods=["GET", "POST"])
 def create_invoice():
     if request.method == "POST":
-        gst_invoice_no = generate_invoice_no()
+        gst_invoice_no = generate_unique_invoice_no()
 
         form_data = request.form.to_dict(flat=False)
         descriptions = form_data.get("description[]", [])
@@ -190,7 +216,6 @@ def create_invoice():
 
         cgst_amount = total_value * cgst_rate / 100
         sgst_amount = total_value * sgst_rate / 100
-
         grand_total = total_value + cgst_amount + sgst_amount
 
         conn = get_db()
@@ -198,13 +223,14 @@ def create_invoice():
 
         cur.execute("""
             INSERT INTO Invoices
-            (customer_name, gst_invoice_no, date,
+            (customer_name, party_gst_no, gst_invoice_no, date,
              items_json, total_value, cgst_rate, cgst_amount,
              sgst_rate, sgst_amount, grand_total,
              bank_name, branch, account_no, ifsc)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             request.form.get("customer_name"),
+            request.form.get("party_gst_no"),
             gst_invoice_no,
             request.form.get("date"),
             json.dumps(items),
@@ -225,6 +251,7 @@ def create_invoice():
 
         invoice_data = {
             "customer_name": request.form.get("customer_name"),
+            "party_gst_no": request.form.get("party_gst_no"),
             "gst_invoice_no": gst_invoice_no,
             "date": request.form.get("date"),
             "items": items,
@@ -243,7 +270,7 @@ def create_invoice():
         html = render_template("invoice_template.html", data=invoice_data)
 
         config = pdfkit.configuration(
-            wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+            wkhtmltopdf=r"C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
         )
 
         pdf = pdfkit.from_string(html, False, configuration=config)
@@ -256,16 +283,17 @@ def create_invoice():
 
     return render_template("invoice_form.html")
 
+
+
 # ---------------------------------------
-# FIX: ADD THIS MISSING ROUTE
+# VIEW ALL INVOICES
 # ---------------------------------------
 @app.route("/view_invoices")
 def view_invoices():
     return redirect("/invoices")
 
-# ---------------------------------------
-# VIEW ALL INVOICES
-# ---------------------------------------
+
+
 @app.route("/invoices")
 def invoices():
     conn = get_db()
@@ -287,6 +315,8 @@ def invoices():
 
     return render_template("invoice_list.html", invoices=invoices)
 
+
+
 # ---------------------------------------
 # DOWNLOAD INVOICE
 # ---------------------------------------
@@ -303,38 +333,54 @@ def download_invoice(id):
     if not inv:
         return "Invoice not found!"
 
-    items = json.loads(inv[4])
+    items = json.loads(inv[5])
 
     invoice_data = {
         "customer_name": inv[1],
-        "gst_invoice_no": inv[2],
-        "date": str(inv[3]),
+        "party_gst_no": inv[2],
+        "gst_invoice_no": inv[3],
+        "date": str(inv[4]),
         "items": items,
-        "total_value": inv[5],
-        "cgst_rate": inv[6],
-        "cgst_amount": inv[7],
-        "sgst_rate": inv[8],
-        "sgst_amount": inv[9],
-        "grand_total": inv[10],
-        "bank_name": inv[11],
-        "branch": inv[12],
-        "account_no": inv[13],
-        "ifsc": inv[14],
+        "total_value": inv[6],
+        "cgst_rate": inv[7],
+        "cgst_amount": inv[8],
+        "sgst_rate": inv[9],
+        "sgst_amount": inv[10],
+        "grand_total": inv[11],
+        "bank_name": inv[12],
+        "branch": inv[13],
+        "account_no": inv[14],
+        "ifsc": inv[15],
     }
 
     html = render_template("invoice_template.html", data=invoice_data)
 
     config = pdfkit.configuration(
-        wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+        wkhtmltopdf=r"C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
     )
 
     pdf = pdfkit.from_string(html, False, configuration=config)
 
     return send_file(
         io.BytesIO(pdf),
-        download_name=f"{inv[2]}.pdf",
+        download_name=f"{inv[3]}.pdf",
         mimetype="application/pdf"
     )
+
+
+
+# ----------------------------------------------------
+# API: Generate Unique Invoice Number (FIXED)
+# ----------------------------------------------------
+@app.route("/generate_unique_invoice")
+def generate_unique_invoice():
+    try:
+        invoice_no = generate_unique_invoice_no()
+        return {"invoice_no": str(invoice_no)}
+    except Exception as e:
+        return {"error": str(e)}, 500
+
+
 
 # ---------------------------------------
 # RUN APP
